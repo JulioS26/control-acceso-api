@@ -1,11 +1,12 @@
-const Salida = require('../models/salida');
+const Post = require('../models/salida');
+const fs = require('fs');
 
 module.exports = class API {
     // fetch all posts
     static async fetchAllPost(req,res){
         try{   
-            const salidas = await Salida.find();
-            res.status(200).json(salidas);
+            const posts = await Post.find();
+            res.status(200).json(posts);
         } catch(err){
             res.status(404).json({message: err.message})
         }
@@ -14,18 +15,19 @@ module.exports = class API {
     static async fetchPostByID(req,res){
         const id = req.params.id;
         try{
-            const salida = await Salida.findById(id);
-            res.status(200).json(salida);
+            const post = await Post.findById(id);
+            res.status(200).json(post);
         } catch (err) {
             res.status(404).json({message: err.message});
         }
     }
     // create a post
     static async createPost(req,res){
-        const salida = req.body;
-        
+        const post = req.body;
+        // const imagename = req.file.filename;
+        // post.image = imagename;
         try{
-            await Salida.create(salida);
+            await Post.create(post);
             res.status(201).json({message: 'Salida creada'})
         } catch (err) {
             res.status(400).json({message: err.message})
@@ -34,12 +36,23 @@ module.exports = class API {
     // update a post
     static async updatePost(req,res){
         const id = req.params.id;
-        
+        let new_image = '';
+        if(req.file){
+            new_image = req.file.filename;
+            try {
+                fs.unlinkSync('./uploads/' + req.body.old_image);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            new_image = req.body.old_image;
+        }
 
         const newPost = req.body;
+        newPost.image = new_image
 
         try {
-            await Salida.findByIdAndUpdate(id, newPost);
+            await Post.findByIdAndUpdate(id, newPost);
             res.status(200).json({message: 'Salida actualizada'})
         } catch (err) {
             res.status(404).json({message: err.message})
@@ -49,7 +62,14 @@ module.exports = class API {
     static async deletePost(req,res){
         const id = req.params.id;
         try {
-            const result = await Salida.findByIdAndDelete(id);
+            const result = await Post.findByIdAndDelete(id);
+            if(result.image != ''){
+                try {
+                    fs.unlinkSync('./uploads' + result.image);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
             res.status(200).json({message: 'Salida eliminada'})
         } catch (err) {
             res.status(404).json({message: err.message})

@@ -11,13 +11,13 @@ const port = process.env.PORT || 7000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(express.static("uploads"));
+// app.use(express.static("uploads"));
 
 //routes prefix
 
-app.use('/api/post', require('./routes/routes'))
-app.use('/api/entrada', require('./routes/routesEntrada'))
-app.use('/api/salida', require('./routes/routesSalida'))
+app.use('/api/post', require('./routes/routes'));
+app.use('/api/entrada', require('./routes/routesEntrada'));
+app.use('/api/salida', require('./routes/routesSalida'));
 
 // database connection
 // mernv1, LR4L6C6AS1PTTmpU

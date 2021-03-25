@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const entradaSchema = mongoose.Schema({
+const postSchema = mongoose.Schema({
     cedula:String,
     created:{
         type:Date,
@@ -8,4 +8,4 @@ const entradaSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Entrada', entradaSchema);
+module.exports = mongoose.model('Entrada', postSchema);

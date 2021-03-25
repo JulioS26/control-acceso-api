@@ -1,54 +1,68 @@
-const Entrada = require('../models/entrada');
+const Post = require('../models/entrada');
+const fs = require('fs');
 
 module.exports = class API {
-    // Todas las entradas
+    // fetch all posts
     static async fetchAllPost(req,res){
         try{   
-            const entradas = await Entrada.find();
-            res.status(200).json(entradas);
+            const posts = await Post.find();
+            res.status(200).json(posts);
         } catch(err){
             res.status(404).json({message: err.message})
         }
     }
-    // Entrada por su ID
+    // fetch post by ID
     static async fetchPostByID(req,res){
         const id = req.params.id;
         try{
-            const entrada = await Entrada.findById(id);
-            res.status(200).json(entrada);
+            const post = await Post.findById(id);
+            res.status(200).json(post);
         } catch (err) {
             res.status(404).json({message: err.message});
         }
     }
-    // Crear entradas
+    // create a post
     static async createPost(req,res){
-        const entrada = req.body;
-        
+        const post = req.body;
+        // const imagename = req.file.filename;
+        // post.image = imagename;
         try{
-            await Entrada.create(entrada);
+            await Post.create(post);
             res.status(201).json({message: 'Entrada creada'})
         } catch (err) {
             res.status(400).json({message: err.message})
         }
     }
-    // Actualizar entrada
+    // update a post
     static async updatePost(req,res){
         const id = req.params.id;
+        let new_image = '';
+        if(req.file){
+            new_image = req.file.filename;
+            try {
+                fs.unlinkSync('./uploads/' + req.body.old_image);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            new_image = req.body.old_image;
+        }
 
         const newPost = req.body;
+        newPost.image = new_image
 
         try {
-            await Entrada.findByIdAndUpdate(id, newPost);
+            await Post.findByIdAndUpdate(id, newPost);
             res.status(200).json({message: 'Entrada actualizada'})
         } catch (err) {
             res.status(404).json({message: err.message})
         }
     }
-    // Eliminar entrada
+    // delete a post
     static async deletePost(req,res){
         const id = req.params.id;
         try {
-            const result = await Entrada.findByIdAndDelete(id);
+            const result = await Post.findByIdAndDelete(id);
             if(result.image != ''){
                 try {
                     fs.unlinkSync('./uploads' + result.image);
