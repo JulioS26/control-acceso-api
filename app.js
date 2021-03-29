@@ -18,6 +18,7 @@ app.use(express.urlencoded({extended: true}));
 app.use('/api/post', require('./routes/routes'));
 app.use('/api/entrada', require('./routes/routesEntrada'));
 app.use('/api/salida', require('./routes/routesSalida'));
+app.use('/api/usuario', require('./routes/routesUsuario'));
 
 // database connection
 // mernv1, LR4L6C6AS1PTTmpU
